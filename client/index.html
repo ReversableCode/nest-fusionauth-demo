@@ -1,0 +1,42 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FusionAuth NestJs Demo</title>
+</head>
+
+<body>
+  <h1>Hello World</h1>
+  <p id="fusionauth-user"></p>
+  <script>
+    (function() {
+      const cookies = document.cookie
+        .split(';')
+        .reduce((res, c) => {
+          const [key, val] = c.trim().split('=').map(decodeURIComponent)
+          try {
+            return Object.assign(res, { [key]: JSON.parse(val) })
+          } catch (e) {
+            return Object.assign(res, { [key]: val })
+          }
+        }, {});
+
+      console.log(JSON.stringify(cookies))
+
+      fetch('/user', {
+        headers: {
+          'Authorization': 'Bearer ' + cookies['access_token'],
+        },
+      }).then((response) => {
+        return response.json()
+      }).then((data) => {
+        document.getElementById('fusionauth-user').innerHTML = JSON.stringify(data)
+      }).catch(() => {
+        document.getElementById('fusionauth-user').innerHTML =  "Error authorizing user"
+      })
+    })()
+  </script>
+</body>
+
+</html>
